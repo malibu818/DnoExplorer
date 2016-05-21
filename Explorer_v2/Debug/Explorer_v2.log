@@ -1,0 +1,6 @@
+﻿  Explorer_v2.cpp
+c:\users\user\desktop\explorer_v2\explorer_v2\explorer_v2\explorer_v2.cpp(9): warning C4005: MAX_PATH: изменение макроопределения
+  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(60): note: см. предыдущее определение "MAX_PATH"
+c:\users\user\desktop\explorer_v2\explorer_v2\explorer_v2\explorer_v2.cpp(470): warning C4244: аргумент: преобразование "LONGLONG" в "WPARAM", возможна потеря данных
+c:\users\user\desktop\explorer_v2\explorer_v2\explorer_v2\explorer_v2.cpp(575): warning C4477: "swprintf_s": в строке форматирования "%lld" требуется аргумент типа "__int64", но вариативный аргумент "1" имеет тип "LARGE_INTEGER"
+  Explorer_v2.vcxproj -> C:\Users\user\Desktop\Explorer_v2\Explorer_v2\Debug\Explorer_v2.exe
