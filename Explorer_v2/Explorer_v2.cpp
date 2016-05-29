@@ -12,7 +12,7 @@
 HINSTANCE hInst;								// текущий экземпляр
 TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
 TCHAR szWindowClass[MAX_LOADSTRING];			// имя класса главного окна
-
+bool reloadFileList = 1;
 HWND hWndListBox1, hWndListBox2;
 HWND hWndEdit1, hWndEdit2;
 HWND hWndProgressBar;
@@ -27,6 +27,8 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	Dialog_Progress_Bar(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	Dialog_Progress_Bar_Move(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	Dialog_Progress_Bar_Delete(HWND, UINT, WPARAM, LPARAM);
 DWORD CALLBACK CopyProgressRoutine(
 	_In_      LARGE_INTEGER TotalFileSize,
 	_In_      LARGE_INTEGER TotalBytesTransferred,
@@ -143,7 +145,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
 //  НАЗНАЧЕНИЕ:  обрабатывает сообщения в главном окне.
-//
 //  WM_COMMAND	- обработка меню приложения
 //  WM_PAINT	-Закрасить главное окно
 //  WM_DESTROY	 - ввести сообщение о выходе и вернуться.
@@ -161,7 +162,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	TCHAR selectedFileSize[MAX_PATH];
 	TCHAR fullPathToFile[MAX_PATH];
 	int k = 0;
-	bool reloadFileList = 1;
 	HWND hWndListBox = 0;
 	HWND hWndEdit = 0;
 	TCHAR *path = 0;
@@ -238,6 +238,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		CreateWindow(_T("BUTTON"), _T("Перемещение"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 			x + 120, y, 100, 30, hWnd, (HMENU)ID_BUTTON_MOVE, NULL, NULL);
+
+		CreateWindow(_T("BUTTON"), _T("Нахуй"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+			x + 240, y, 100, 30, hWnd, (HMENU)ID_BUTTON_DELETE, NULL, NULL);
 
 		break;
 	case WM_NOTIFY:
@@ -354,6 +357,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_BUTTON_COPY:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_PROGRESS_BAR), hWnd, Dialog_Progress_Bar);
 			break;
+		case ID_BUTTON_MOVE:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_PROGRESS_BAR), hWnd, Dialog_Progress_Bar_Move);
+			break;
+		case ID_BUTTON_DELETE:
+			fullPathToFile[0] = 0;
+			switch (lastListBox) {
+			case 1:
+				_tcscpy_s(fullPathToFile, path1);
+				_tcscat_s(fullPathToFile, selectedFile1);
+				break;
+			case 2:
+				_tcscpy_s(fullPathToFile, path2);
+				_tcscat_s(fullPathToFile, selectedFile2);
+				break;
+			}
+			DeleteFile(fullPathToFile);
+			reloadFileList = 1;
+			lastListBox = 0;
+			SetWindowText(hWndEdit1, path1);
+			LoadFileList(hWndListBox1, path1);
+			lastListBox = 0;
+			SetWindowText(hWndEdit2, path2);
+			LoadFileList(hWndListBox2, path2);
+			break;
 		default:
 			if (wmId >= ID_BUTTON_START && wmId < id_button)
 			{
@@ -428,14 +455,18 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 			_tcscat_s(lpExistingFileName, selectedFile1);
 			_tcscpy_s(lpNewFileName, path2);
 			_tcscat_s(lpNewFileName, selectedFile1);
-			CopyFileEx(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDD_DIALOG_PROGRESS_BAR), 0, COPY_FILE_FAIL_IF_EXISTS);
+			CopyFileEx(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDC_PROGRESS1), 0, COPY_FILE_FAIL_IF_EXISTS);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
 			break;
 		case 2:
 			_tcscpy_s(lpExistingFileName, path2);
 			_tcscat_s(lpExistingFileName, selectedFile2);
 			_tcscpy_s(lpNewFileName, path1);
-			_tcscpy_s(lpNewFileName, selectedFile2);
-			CopyFileEx(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDD_DIALOG_PROGRESS_BAR), 0, COPY_FILE_FAIL_IF_EXISTS);			
+			_tcscat_s(lpNewFileName, selectedFile2);
+			CopyFileEx(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDC_PROGRESS1), 0, COPY_FILE_FAIL_IF_EXISTS);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
 			break;
 		}
 		return (INT_PTR)TRUE;
@@ -443,6 +474,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDCANCEL)
 		{
+			reloadFileList = 1;
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
@@ -451,6 +483,97 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 	return (INT_PTR)FALSE;
 }
 
+INT_PTR CALLBACK Dialog_Progress_Bar_Move(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR lpExistingFileName[MAX_PATH];
+	TCHAR lpNewFileName[MAX_PATH];
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		switch (lastListBox)
+		{
+		case 0:
+			EndDialog(hDlg, LOWORD(IDCANCEL));
+		case 1:
+			_tcscpy_s(lpExistingFileName, path1);
+			_tcscat_s(lpExistingFileName, selectedFile1);
+			_tcscpy_s(lpNewFileName, path2);
+			_tcscat_s(lpNewFileName, selectedFile1);
+			MoveFileWithProgress(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDC_PROGRESS1), MOVEFILE_COPY_ALLOWED);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
+			break;
+		case 2:
+			_tcscpy_s(lpExistingFileName, path2);
+			_tcscat_s(lpExistingFileName, selectedFile2);
+			_tcscpy_s(lpNewFileName, path1);
+			_tcscat_s(lpNewFileName, selectedFile2);
+			MoveFileWithProgress(lpExistingFileName, lpNewFileName, CopyProgressRoutine, GetDlgItem(hDlg, IDC_PROGRESS1), MOVEFILE_COPY_ALLOWED);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
+			break;
+		}
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDCANCEL)
+		{
+			reloadFileList = 1;
+			EndDialog(hDlg, LOWORD(wParam));
+			lastListBox = 0;
+			SetWindowText(hWndEdit1, path1);
+			LoadFileList(hWndListBox1, path1);
+			lastListBox = 0;
+			SetWindowText(hWndEdit2, path2);
+			LoadFileList(hWndListBox2, path2);
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK Dialog_Progress_Bar_Delete(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR lpExistingFileName[MAX_PATH];
+	TCHAR lpNewFileName[MAX_PATH];
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		switch (lastListBox)
+		{
+		case 0:
+			EndDialog(hDlg, LOWORD(IDCANCEL));
+		case 1:
+			_tcscpy_s(lpExistingFileName, path1);
+			_tcscat_s(lpExistingFileName, selectedFile1);
+			DeleteFile(lpExistingFileName);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
+			break;
+		case 2:
+			_tcscpy_s(lpExistingFileName, path2);
+			_tcscat_s(lpExistingFileName, selectedFile2);
+			DeleteFile(lpExistingFileName);
+			reloadFileList = 1;
+			//EndDialog(hDlg, LOWORD(wParam));
+			break;
+		}
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDCANCEL)
+		{
+			reloadFileList = 1;
+			EndDialog(hDlg, LOWORD(wParam));
+			
+
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
 
 DWORD CALLBACK CopyProgressRoutine(
 	_In_      LARGE_INTEGER TotalFileSize,
@@ -470,6 +593,16 @@ DWORD CALLBACK CopyProgressRoutine(
 		SendMessage((HWND)lpData, PBM_SETPOS, (TotalBytesTransferred.QuadPart / TotalFileSize.QuadPart * 100), 0);
 		break;
 	}
+	if (TotalBytesTransferred.QuadPart == TotalFileSize.QuadPart) {
+		
+		reloadFileList = 1;
+	}
+	lastListBox = 0;
+	SetWindowText(hWndEdit1, path1);
+	LoadFileList(hWndListBox1, path1);
+	lastListBox = 0;
+	SetWindowText(hWndEdit2, path2);
+	LoadFileList(hWndListBox2, path2);
 	return PROGRESS_CONTINUE;
 }
 
@@ -501,9 +634,9 @@ HWND CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id)
 		//		| LVS_EX_GRIDLINES		// показывать сетку таблицы
 		);
 	//--Настройка цветов--//
-	ListView_SetBkColor(hWndListBox, 0x00000000);	//0x00bbggrr
-	ListView_SetTextColor(hWndListBox, 0x0000ff00);
-	ListView_SetTextBkColor(hWndListBox, 0x00000000);
+	ListView_SetBkColor(hWndListBox, 0x00bef574);	//0x00bbggrr
+	ListView_SetTextColor(hWndListBox, 0x00fbceb1);
+	ListView_SetTextBkColor(hWndListBox, 0x00ff1493);
 	//--Добавление колонки--//
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.iSubItem = 0;			// номер колонки
