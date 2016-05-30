@@ -9,9 +9,9 @@
 #define MAX_PATH		512
 
 // Global variables:
-HINSTANCE hInst;								// текущий экземпляр
-TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
-TCHAR szWindowClass[MAX_LOADSTRING];			// имя класса главного окна
+HINSTANCE hInst;								// current instanse/example
+TCHAR szTitle[MAX_LOADSTRING];					// The text of the title bar
+TCHAR szWindowClass[MAX_LOADSTRING];			// Class name of the main window
 bool reloadFileList = 1;
 HWND hWndListBox1, hWndListBox2;
 HWND hWndEdit1, hWndEdit2;
@@ -21,7 +21,7 @@ TCHAR selectedFile1[MAX_PATH], selectedFile2[MAX_PATH];
 int lastListBox = 0;
 int id_button = ID_BUTTON_START;
 
-// Отправить объявления функций, включенных в этот модуль кода:
+// Send function declarations, included in the code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -53,16 +53,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,      //main function
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: разместите код здесь.
+ 	// TODO: insert code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
-	// Инициализация глобальных строк
+	// Initialization of global lines
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_EXPLORER_V2, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	// Выполнить инициализацию приложения:
+	// Perform application initialization:
 	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
@@ -70,7 +70,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,      //main function
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_EXPLORER_V2));
 
-	// Цикл основного сообщения:
+	// The main message cycle :
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -86,9 +86,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,      //main function
 
 
 //
-//  ФУНКЦИЯ: MyRegisterClass()
+//  FUNCTION: MyRegisterClass()
 //
-//  НАЗНАЧЕНИЕ: регистрирует класс окна.
+//  PURPOSE: To register window class.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -112,20 +112,20 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 //
-//   ФУНКЦИЯ: InitInstance(HINSTANCE, int)
+//   FUNCTION: InitInstance(HINSTANCE, int)
 //
-//   НАЗНАЧЕНИЕ: сохраняет обработку экземпляра и создает главное окно.
+//   PURPOSE: Saves instance processing and creates the main window.
 //
-//   КОММЕНТАРИИ:
+//   COMMENTS:
 //
-//        В данной функции дескриптор экземпляра сохраняется в глобальной переменной, а также
-//        создается и выводится на экран главное окно программы.
+//        In this function instanse descriptor is stored in a global varaible,
+//        also creates and displays the main program window
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;
 
-   hInst = hInstance; // Сохранить дескриптор экземпляра в глобальной переменной
+   hInst = hInstance; // Save instance/example descriptor in a global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, 1000, 600, NULL, NULL, hInstance, NULL);
@@ -142,12 +142,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  НАЗНАЧЕНИЕ:  обрабатывает сообщения в главном окне.
-//  WM_COMMAND	- обработка меню приложения
-//  WM_PAINT	-Закрасить главное окно
-//  WM_DESTROY	 - ввести сообщение о выходе и вернуться.
+//  PURPOSE: To process the message in the main window.
+//  WM_COMMAND	- processing the application menu
+//  WM_PAINT	- Zakrasit main window
+//  WM_DESTROY	 -  enter a message of exit and return.
 //
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)   //Main window procedure
@@ -295,7 +295,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				selectedFile = new TCHAR[MAX_PATH];
 				ListView_GetItemText(lpnmHdr->hwndFrom, pnmLV->iItem, 0, selectedFile, MAX_PATH);
 
-				if (_tcscmp(selectedFile, _T("..")) == 0)	// Вверх на одну дирректорию
+				if (_tcscmp(selectedFile, _T("..")) == 0)	// Go up one directory
 				{
 					path[_tcslen(path) - 1] = 0;
 					for (int i = _tcslen(path) - 1; i > 0; i--)
@@ -310,7 +310,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 					}
 					path[k + 1] = 0;
 				}
-				else if (_tcscmp(selectedFile, _T(".")) == 0)	// В корень диска
+				else if (_tcscmp(selectedFile, _T(".")) == 0)	// go to the root of the disk
 				{
 					path[3] = 0;
 				}
@@ -347,7 +347,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
-		// Разобрать выбор в меню:
+		//Disassemble the choice in the menu :
 		switch (wmId)
 		{
 		case IDM_ABOUT:
@@ -409,7 +409,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: добавьте любой код отрисовки...
+		// TODO:  Add any drawing code...
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
@@ -421,7 +421,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return 0;
 }
 
-// Обработчик сообщений для окна "О программе".
+// Message handler for the window "About".
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -539,6 +539,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar_Move(HWND hDlg, UINT message, WPARAM wParam
 	return (INT_PTR)FALSE;
 }
 
+//Dialog for deleting
 INT_PTR CALLBACK Dialog_Progress_Bar_Delete(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	TCHAR lpExistingFileName[MAX_PATH];
@@ -617,17 +618,17 @@ DWORD CALLBACK CopyProgressRoutine(
 HWND CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id)
 {
 	HWND hWndListBox;
-	LVCOLUMN lvc;	// структура колонки
+	LVCOLUMN lvc;	// column structure
 
 	hWndListBox = CreateWindow(WC_LISTVIEW,
 		_T(""),
 		WS_CHILD
-		| WS_VISIBLE	// Видимый
-		| WS_BORDER		// Рамка
+		| WS_VISIBLE	// Visible
+		| WS_BORDER		// Frame
 		| ES_READONLY
-		| LVS_REPORT	// Стиль таблицы
+		| LVS_REPORT	// Table style
 		//		| LVS_NOSORTHEADER 
-		//		| WS_SIZEBOX	// Изменяемый размер
+		//		| WS_SIZEBOX	// Izmenyaemi razmer
 		,
 		x, y,
 		width, heigth,

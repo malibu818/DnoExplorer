@@ -1,7 +1,7 @@
 ﻿  Explorer_v2.cpp
 c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(9): warning C4005: MAX_PATH: изменение макроопределения
   c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(60): note: см. предыдущее определение "MAX_PATH"
-c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(545): warning C4101: lpNewFileName: неиспользованная локальная переменная
-c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(600): warning C4244: аргумент: преобразование "LONGLONG" в "WPARAM", возможна потеря данных
-c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(716): warning C4477: "swprintf_s": в строке форматирования "%lld" требуется аргумент типа "__int64", но вариативный аргумент "1" имеет тип "LARGE_INTEGER"
+c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(546): warning C4101: lpNewFileName: неиспользованная локальная переменная
+c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(601): warning C4244: аргумент: преобразование "LONGLONG" в "WPARAM", возможна потеря данных
+c:\users\user\desktop\courcework\dnoexplorer\explorer_v2\explorer_v2.cpp(717): warning C4477: "swprintf_s": в строке форматирования "%lld" требуется аргумент типа "__int64", но вариативный аргумент "1" имеет тип "LARGE_INTEGER"
   Explorer_v2.vcxproj -> C:\Users\user\Desktop\CourceWork\DnoExplorer\Debug\Explorer_v2.exe
