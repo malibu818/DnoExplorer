@@ -8,7 +8,7 @@
 #define MAX_LOADSTRING	100
 #define MAX_PATH		512
 
-// Глобальные переменные:
+// Global variables:
 HINSTANCE hInst;								// текущий экземпляр
 TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
 TCHAR szWindowClass[MAX_LOADSTRING];			// имя класса главного окна
@@ -29,7 +29,7 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	Dialog_Progress_Bar(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	Dialog_Progress_Bar_Move(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	Dialog_Progress_Bar_Delete(HWND, UINT, WPARAM, LPARAM);
-DWORD CALLBACK CopyProgressRoutine(
+DWORD CALLBACK CopyProgressRoutine(   //Progress bar for dialog
 	_In_      LARGE_INTEGER TotalFileSize,
 	_In_      LARGE_INTEGER TotalBytesTransferred,
 	_In_      LARGE_INTEGER StreamSize,
@@ -40,12 +40,12 @@ DWORD CALLBACK CopyProgressRoutine(
 	_In_      HANDLE hDestinationFile,
 	_In_opt_  LPVOID lpData
 	);
-HWND				CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id);
-void				LoadFileList(HWND hWndlistBox, TCHAR *path);
+HWND				CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id);    //Creating List Area
+void				LoadFileList(HWND hWndlistBox, TCHAR *path);    //Loading Files in List Box
 int CALLBACK		SortUpDir(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
-void				AddIconToListBox(HWND hWndListBox, int size, TCHAR c_dir[MAX_PATH]);
+void				AddIconToListBox(HWND hWndListBox, int size, TCHAR c_dir[MAX_PATH]);    //Load Icons from system
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,      //main function
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
@@ -150,7 +150,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	 - ввести сообщение о выходе и вернуться.
 //
 //
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)   //Main window procedure
 {
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
@@ -173,7 +173,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:		
 		InitCommonControls();
 			
-		disk_start = disk = new TCHAR[256];
+		disk_start = disk = new TCHAR[256];   //Loading disks
 		memset(disk_start, 0, sizeof(disk_start));
 
 		GetLogicalDrives();
@@ -182,7 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		x = 10;
 		y = 10;
 		k = _tcslen(disk) + 1;
-		while (*disk != '\0')
+		while (*disk != '\0')   //Creating disk buttons
 		{
 			disk[1] = 0;
 			CreateWindow(_T("BUTTON"), disk, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		x = 10;
 		y += 30;
 
-
+		// Create edits
 		hWndEdit1 = CreateWindow(_T("EDIT"), NULL, WS_BORDER | WS_VISIBLE | WS_CHILD | ES_LEFT | ES_READONLY,
 			x, y, 480, 20, hWnd, (HMENU)ID_EDIT_1, NULL, NULL);
 
@@ -233,17 +233,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetWindowText(hWndEdit1, path1);
 		SetWindowText(hWndEdit2, path2);
 
+		//Buttons for Actions
+
 		CreateWindow(_T("BUTTON"), _T("Копирование"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 			x, y, 100, 30, hWnd, (HMENU)ID_BUTTON_COPY, NULL, NULL);
 
 		CreateWindow(_T("BUTTON"), _T("Перемещение"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 			x + 120, y, 100, 30, hWnd, (HMENU)ID_BUTTON_MOVE, NULL, NULL);
 
-		CreateWindow(_T("BUTTON"), _T("Нахуй"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		CreateWindow(_T("BUTTON"), _T("Удаление"), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 			x + 240, y, 100, 30, hWnd, (HMENU)ID_BUTTON_DELETE, NULL, NULL);
 
 		break;
-	case WM_NOTIFY:
+	case WM_NOTIFY:   //get message
 		switch (lpnmHdr->code)
 		{
 		case NM_CLICK:
@@ -268,7 +270,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			if (hWndListBox)
 			{
-				ListView_GetItemText(lpnmHdr->hwndFrom, pnmLV->iItem, 0, selectedFile, MAX_PATH);
+				ListView_GetItemText(lpnmHdr->hwndFrom, pnmLV->iItem, 0, selectedFile, MAX_PATH);   //into selected file insert path of the file
 			}
 			break;
 //		case NM_RETURN:
@@ -439,7 +441,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return (INT_PTR)FALSE;
 }
 
-INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+//Dialog for copying
+INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)    
 {
 	TCHAR lpExistingFileName[MAX_PATH];
 	TCHAR lpNewFileName[MAX_PATH];
@@ -451,6 +454,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 		case 0:
 			EndDialog(hDlg, LOWORD(IDCANCEL));
 		case 1:
+			//get paths
 			_tcscpy_s(lpExistingFileName, path1);
 			_tcscat_s(lpExistingFileName, selectedFile1);
 			_tcscpy_s(lpNewFileName, path2);
@@ -474,6 +478,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDCANCEL)
 		{
+			//close the window
 			reloadFileList = 1;
 			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
@@ -483,6 +488,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar(HWND hDlg, UINT message, WPARAM wParam, LPA
 	return (INT_PTR)FALSE;
 }
 
+//Dialog for moving
 INT_PTR CALLBACK Dialog_Progress_Bar_Move(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	TCHAR lpExistingFileName[MAX_PATH];
@@ -575,6 +581,7 @@ INT_PTR CALLBACK Dialog_Progress_Bar_Delete(HWND hDlg, UINT message, WPARAM wPar
 	return (INT_PTR)FALSE;
 }
 
+//Progress Bar Handling
 DWORD CALLBACK CopyProgressRoutine(
 	_In_      LARGE_INTEGER TotalFileSize,
 	_In_      LARGE_INTEGER TotalBytesTransferred,
@@ -597,6 +604,7 @@ DWORD CALLBACK CopyProgressRoutine(
 		
 		reloadFileList = 1;
 	}
+	//update file list
 	lastListBox = 0;
 	SetWindowText(hWndEdit1, path1);
 	LoadFileList(hWndListBox1, path1);
@@ -634,9 +642,9 @@ HWND CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id)
 		//		| LVS_EX_GRIDLINES		// показывать сетку таблицы
 		);
 	//--Настройка цветов--//
-	ListView_SetBkColor(hWndListBox, 0x00bef574);	//0x00bbggrr
-	ListView_SetTextColor(hWndListBox, 0x00fbceb1);
-	ListView_SetTextBkColor(hWndListBox, 0x00ff1493);
+	ListView_SetBkColor(hWndListBox, 0x00DA70D6);	//0x00bbggrr
+	ListView_SetTextColor(hWndListBox, 0x00000000);
+	ListView_SetTextBkColor(hWndListBox, 0x00DA70D6);
 	//--Добавление колонки--//
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.iSubItem = 0;			// номер колонки
@@ -737,6 +745,7 @@ void LoadFileList(HWND hWndListBox, TCHAR *path)
 	ListView_SortItemsEx(hWndListBox, SortUpDir, hWndListBox);
 }
 
+//Sorting directory
 int CALLBACK SortUpDir(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	TCHAR word1[256], word2[256];
