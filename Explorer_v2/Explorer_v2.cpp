@@ -734,13 +734,13 @@ void LoadFileList(HWND hWndListBox, TCHAR *path)
 				}
 				ListView_SetItemText(hWndListBox, i, 1, cTmp);
 			}
-			//--Вывод даты файла--//
-			FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &fileDate);		// преобразование даты в другую структуру
+			//--Output file date--//
+			FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &fileDate);		// the date conversion to another structure
 			_stprintf_s(cTmp, 256, _T("%02d.%02d.%04d %02d:%02d"), fileDate.wDay, fileDate.wMonth, fileDate.wYear, fileDate.wHour, fileDate.wMinute);
 			ListView_SetItemText(hWndListBox, i, 2, cTmp);
 
 			i++;
-		} while (FindNextFile(findFile, &fileInfo));		// Загрузка данных о следующем файле
+		} while (FindNextFile(findFile, &fileInfo));		// Download information about the following file
 	}
 	AddIconToListBox(hWndListBox, i, path2);
 	ListView_SortItemsEx(hWndListBox, SortUpDir, hWndListBox);
@@ -802,9 +802,9 @@ void AddIconToListBox(HWND hWndListBox, int size, TCHAR c_dir[MAX_PATH])
 	else
 	{
 		do 
-		{//присваеваем атрибуты
+		{//assigns attributes
 			if (_tcscmp(FindFileData.cFileName, _T(".")) == 0)
-			{//если диск
+			{//if a disk
 				_tcscpy_s(buf1, c_dir);
 				_tcscat_s(buf1, FindFileData.cFileName);
 				SHGetFileInfo(_T(""), FILE_ATTRIBUTE_DEVICE, &lp, sizeof(lp), SHGFI_ICONLOCATION | SHGFI_ICON | SHGFI_SMALLICON);
@@ -814,7 +814,7 @@ void AddIconToListBox(HWND hWndListBox, int size, TCHAR c_dir[MAX_PATH])
 
 			}
 			if (_tcscmp(FindFileData.cFileName, _T("..")) == 0)
-			{//если фаилы,папки
+			{//if files,folders
 				_tcscpy_s(buf1, c_dir);
 				_tcscat_s(buf1, FindFileData.cFileName);
 				SHGetFileInfo(_T(""), FILE_ATTRIBUTE_DIRECTORY, &lp, sizeof(lp), SHGFI_ICONLOCATION | SHGFI_ICON | SHGFI_SMALLICON);
@@ -822,7 +822,7 @@ void AddIconToListBox(HWND hWndListBox, int size, TCHAR c_dir[MAX_PATH])
 				ImageList_AddIcon(hSmall, lp.hIcon);
 				DestroyIcon(lp.hIcon);
 			}
-			//присваеваем иконки
+			//assigne icons
 			_tcscpy_s(buf1, c_dir);
 			buf1[_tcslen(buf1) - 1] = 0;
 
