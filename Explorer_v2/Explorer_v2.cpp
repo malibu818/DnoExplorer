@@ -639,31 +639,31 @@ HWND CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id)
 
 	ListView_SetExtendedListViewStyle(hWndListBox,
 		ListView_GetExtendedListViewStyle(hWndListBox)
-		| LVS_EX_FULLROWSELECT	// Выделение всей строки
-		//		| LVS_EX_GRIDLINES		// показывать сетку таблицы
+		| LVS_EX_FULLROWSELECT	// Select the entire row
+		//		| LVS_EX_GRIDLINES		// show table grid
 		);
-	//--Настройка цветов--//
+	//--color configuration--//
 	ListView_SetBkColor(hWndListBox, 0x00DA70D6);	//0x00bbggrr
 	ListView_SetTextColor(hWndListBox, 0x00000000);
 	ListView_SetTextBkColor(hWndListBox, 0x00DA70D6);
-	//--Добавление колонки--//
+	//--column addition--//
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.iSubItem = 0;			// номер колонки
-	lvc.pszText = _T("Имя");	// имя колонки
-	lvc.cx = 200;               // Ширина колонки
-	lvc.fmt = LVCFMT_LEFT;		// Прижать влево текст
+	lvc.iSubItem = 0;			// column number
+	lvc.pszText = _T("Имя");	// column name
+	lvc.cx = 200;               // column width
+	lvc.fmt = LVCFMT_LEFT;		// press text on the left side
 	ListView_InsertColumn(hWndListBox, 0, &lvc);
 
-	lvc.iSubItem = 1;			// номер колонки
-	lvc.pszText = _T("Размер");	// имя колонки
-	lvc.cx = 90;				// Ширина колонки
-	lvc.fmt = LVCFMT_RIGHT;		// Прижать вправо текст
+	lvc.iSubItem = 1;			// column number
+	lvc.pszText = _T("Размер");	// column name
+	lvc.cx = 90;				// column width
+	lvc.fmt = LVCFMT_RIGHT;		// press text on the right side
 
 	ListView_InsertColumn(hWndListBox, 1, &lvc);
 
-	lvc.iSubItem = 2;			// номер колонки
-	lvc.pszText = _T("Дата");	// имя колонки
-	lvc.cx = 100;				// Ширина колонки
+	lvc.iSubItem = 2;			// column number
+	lvc.pszText = _T("Дата");	// column name
+	lvc.cx = 100;				// column width
 	ListView_InsertColumn(hWndListBox, 2, &lvc);
 
 	return hWndListBox;
