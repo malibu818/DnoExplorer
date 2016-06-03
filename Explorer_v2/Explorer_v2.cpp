@@ -671,12 +671,12 @@ HWND CreateListBox(int x, int y, int width, int heigth, HWND hWnd, HMENU id)
 
 void LoadFileList(HWND hWndListBox, TCHAR *path)
 {
-	LVITEM lvi;					// структура текста в колонке
-	WIN32_FIND_DATA fileInfo;	// переменная для загрузки данных об одном файле
-	HANDLE findFile;			// Указатель на файл
+	LVITEM lvi;					// text structure in the column
+	WIN32_FIND_DATA fileInfo;	// variable to load the data about a file
+	HANDLE findFile;			// The file pointer
 	int i, j, k, iTmp;
-	LARGE_INTEGER fileSize;		// Размер файла
-	SYSTEMTIME fileDate;		// Дата изменения файла
+	LARGE_INTEGER fileSize;		// file size
+	SYSTEMTIME fileDate;		// File change date
 	TCHAR cTmp[256], cTmp2[256];
 	TCHAR path2[MAX_PATH];
 	
@@ -686,26 +686,26 @@ void LoadFileList(HWND hWndListBox, TCHAR *path)
 	_tcscat_s(path2, path);
 	_tcscat_s(path2, _T("*"));
 
-	//--Добавление текста--//
+	//--Adding text--//
 	memset(&lvi, 0, sizeof(lvi));	// Zero struct's Members
 	lvi.mask = LVIF_IMAGE | LVIF_TEXT | LVIF_PARAM;;			// Text Style
-	lvi.cchTextMax = 256;			// Максимальная длина текста
+	lvi.cchTextMax = 256;			//Maximum length of the text
 
-	findFile = FindFirstFile(path2, &fileInfo);	// Загрузка данных о первом файле
+	findFile = FindFirstFile(path2, &fileInfo);	// download information about the first file
 	if (findFile != INVALID_HANDLE_VALUE)
 	{
 		i = 0;
 		do
 		{
-			//--Вывод имени файла--//
-			lvi.iItem = i;							// номер строки
+			//--Output filename--//
+			lvi.iItem = i;							// row number
 			lvi.iImage = i;
-			lvi.iSubItem = 0;						// номер колонки
-			lvi.pszText = fileInfo.cFileName;		// Текст строки
+			lvi.iSubItem = 0;						// column number
+			lvi.pszText = fileInfo.cFileName;		// row text
 			lvi.lParam = i;
 			ListView_InsertItem(hWndListBox, &lvi);
 
-			//--Вывод размера файла--//
+			//--Output file size--//
 			if (fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
 				ListView_SetItemText(hWndListBox, i, 1, _T("<Папка>"));
